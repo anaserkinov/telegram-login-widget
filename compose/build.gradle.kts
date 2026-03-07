@@ -12,6 +12,7 @@ kotlin {
         namespace = "me.anasmusa.telegramloginwidget"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
+        version = (project.findProperty("VERSION_NAME") as String?) ?: "1.0.0"
 
         packaging {
             resources {
@@ -51,13 +52,12 @@ dependencies {
     androidRuntimeClasspath(libs.compose.uiTooling)
 }
 
-val versionName = (project.findProperty("VERSION_NAME") as String?) ?: "1.0.0-SNAPSHOT"
 mavenPublishing {
     publishToMavenCentral(true)
 
     signAllPublications()
 
-    coordinates("me.anasmusa", "telegram-login-widget", versionName)
+    coordinates(group.toString(), "telegram-login-widget", version.toString())
 
     pom {
         name = "Telegram Login Widget"
