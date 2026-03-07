@@ -57,7 +57,7 @@ mavenPublishing {
 
     signAllPublications()
 
-    coordinates(artifactId = "telegram-login-widget")
+    coordinates(groupId = "me.anasmusa", artifactId = "telegram-login-widget")
 
     pom {
         name = "Telegram Login Widget"
