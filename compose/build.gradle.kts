@@ -53,7 +53,7 @@ dependencies {
 }
 
 mavenPublishing {
-    publishToMavenCentral(true)
+    publishToMavenCentral()
 
     signAllPublications()
 
