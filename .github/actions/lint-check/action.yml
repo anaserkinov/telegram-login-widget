@@ -1,0 +1,12 @@
+name: 'Lint Check'
+description: 'Run lint and ktlint checks on the project'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Project
+      uses: ./.github/actions/setup-project
+
+    - name: Run ktlintCheck
+      shell: bash
+      run: ./gradlew ktlintCheck
