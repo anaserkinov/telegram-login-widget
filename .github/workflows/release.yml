@@ -45,4 +45,4 @@ jobs:
               --title "$TAG" \
               --verify-tag \
               --prerelease
-          shell: bash
+        shell: bash
