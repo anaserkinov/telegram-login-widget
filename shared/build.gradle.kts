@@ -39,7 +39,6 @@ kotlin {
 }
 
 skie {
-    isEnabled = false
     analytics {
         disableUpload.set(true)
     }
