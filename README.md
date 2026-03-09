@@ -11,6 +11,8 @@ A Kotlin Multiplatform library that brings [Telegram Login Widget](https://core.
 | Android  | ✅        |
 | iOS      | ✅        |
 
+Looking for the iOS / SwiftUI version? Check out the [Swift package](https://github.com/anaserkinov/telegram-login-widget-swift).
+
 ---
 
 ## Installation
@@ -171,6 +173,20 @@ if (showBottomSheet) {
 }
 ```
 
+If you need to embed the Telegram OAuth WebView directly into your own layout without any button or bottom sheet, use `TelegramLoginView`:
+
+```kotlin
+TelegramLoginView(
+    config = TelegramLoginConfig(
+        botId = 123456789,
+        botUsername = "your_bot",
+        websiteUrl = "https://yourdomain.com"
+    ),
+    modifier = Modifier.fillMaxSize(),
+    onResult = onResult,
+)
+```
+
 ---
 
 ### Logout
@@ -206,8 +222,8 @@ fun rememberTelegramLoginState(
 | Member | Type | Description |
 |--------|------|-------------|
 | `config` | `TelegramLoginConfig` | The configuration used to initialize the widget |
-| `isLoading` | `Boolean` | `true` while the user photo is being fetched |
-| `buttonContent` | `ButtonContent` | Current text, first name, and avatar painter |
+| `isLoading` | `Boolean` | `true` while button content or user photo is being fetched |
+| `buttonContent` | `ButtonContent` | Current text (may be empty before first successful load), first name, and avatar painter |
 | `reload()` | `fun` | Re-fetches button state (call after a login result) |
 | `logout()` | `fun` | Clears session and resets button |
 

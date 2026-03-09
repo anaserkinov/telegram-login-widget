@@ -27,7 +27,7 @@ fun rememberTelegramLoginState(
 ): TelegramLoginState {
     val coroutineScope = rememberCoroutineScope()
     val context = getPlatformContext()
-    return remember {
+    return remember(requestAccess, languageCode) {
         TelegramLoginState(
             context = context,
             config =
@@ -95,7 +95,6 @@ class TelegramLoginState(
     fun logout() {
         scope.launch {
             TelegramLoginManager.logout()
-            isLoading = true
             load()
         }
     }
