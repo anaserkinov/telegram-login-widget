@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.androidLint)
     alias(libs.plugins.skie)
     alias(libs.plugins.ktlint)
+    alias(libs.plugins.mavenPublish)
 }
 
 kotlin {
@@ -40,5 +41,39 @@ skie {
     isEnabled = false
     analytics {
         disableUpload.set(true)
+    }
+}
+
+mavenPublishing {
+    publishToMavenCentral()
+
+    signAllPublications()
+
+    coordinates(artifactId = "telegram-login-data")
+
+    pom {
+        name = "Telegram Login Data"
+        description = "Telegram Login Data"
+        inceptionYear = "2026"
+        url = "https://github.com/anaserkinov/telegram-login-widget/"
+        licenses {
+            license {
+                name = "MIT license"
+                url = "https://github.com/anaserkinov/telegram-login-widget?tab=MIT-1-ov-file"
+                distribution = "https://github.com/anaserkinov/telegram-login-widget?tab=MIT-1-ov-file"
+            }
+        }
+        developers {
+            developer {
+                name = "Anas"
+                email = "anaserkinjonov@gmail.com"
+                url = "https://github.com/anaserkinov/"
+            }
+        }
+        scm {
+            url = "https://github.com/anaserkinov/telegram-login-widget/"
+            connection = "scm:git:git://github.com/anaserkinov/telegram-login-widget.git"
+            developerConnection = "scm:git:ssh://git@github.com/anaserkinov/telegram-login-widget.git"
+        }
     }
 }

@@ -12,7 +12,6 @@ kotlin {
         namespace = "me.anasmusa.telegramloginwidget"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
-        version = (project.findProperty("VERSION_NAME") as String?) ?: "1.0.0"
 
         packaging {
             resources {
@@ -32,18 +31,22 @@ kotlin {
     }
     
     sourceSets {
-        androidMain.dependencies {
-            implementation(libs.compose.uiToolingPreview)
-            implementation(libs.androidx.activity.compose)
+        commonMain {
+            dependencies {
+                implementation(libs.compose.runtime)
+                implementation(libs.compose.foundation)
+                implementation(libs.compose.material3)
+                implementation(libs.compose.ui)
+                implementation(libs.compose.uiToolingPreview)
+                implementation(libs.androidx.lifecycle.runtimeCompose)
+                api(project(":shared"))
+            }
         }
-        commonMain.dependencies {
-            implementation(libs.compose.runtime)
-            implementation(libs.compose.foundation)
-            implementation(libs.compose.material3)
-            implementation(libs.compose.ui)
-            implementation(libs.compose.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.runtimeCompose)
-            api(project(":shared"))
+        androidMain {
+            dependencies {
+                implementation(libs.compose.uiToolingPreview)
+                implementation(libs.androidx.activity.compose)
+            }
         }
     }
 }
@@ -57,7 +60,7 @@ mavenPublishing {
 
     signAllPublications()
 
-    coordinates(groupId = "me.anasmusa", artifactId = "telegram-login-widget")
+    coordinates(artifactId = "telegram-login-widget")
 
     pom {
         name = "Telegram Login Widget"

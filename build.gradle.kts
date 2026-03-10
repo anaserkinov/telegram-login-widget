@@ -28,3 +28,7 @@ allprojects {
     }
 }
 
+allprojects {
+    group = "me.anasmusa"
+    version = (project.findProperty("VERSION_NAME") as String?) ?: "1.0.0"
+}
