@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import me.anasmusa.shared.TelegramLoginConfig
 import me.anasmusa.shared.TelegramLoginResult
+import me.anasmusa.shared.buildTelegramAuthUrl
 import org.json.JSONObject
 
 @Composable
@@ -37,18 +38,7 @@ actual fun TelegramLoginView(
 
     var isLoading by remember { mutableStateOf(true) }
 
-    val telegramUrl =
-        remember(config) {
-            buildString {
-                append("https://oauth.telegram.org/auth?")
-                append("bot_id=${config.botId}")
-                append("&origin=${config.websiteUrl}")
-                append("&lang=${config.languageCode}")
-                if (config.requestAccess) {
-                    append("&request_access=write")
-                }
-            }
-        }
+    val telegramUrl = remember(config) { config.buildTelegramAuthUrl() }
 
     DisposableEffect(Unit) {
         onDispose {

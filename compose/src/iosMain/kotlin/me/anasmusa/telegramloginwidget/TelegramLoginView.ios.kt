@@ -19,6 +19,7 @@ import kotlinx.cinterop.addressOf
 import kotlinx.cinterop.usePinned
 import me.anasmusa.shared.TelegramLoginConfig
 import me.anasmusa.shared.TelegramLoginResult
+import me.anasmusa.shared.buildTelegramAuthUrl
 import platform.Foundation.NSData
 import platform.Foundation.NSDataBase64DecodingIgnoreUnknownCharacters
 import platform.Foundation.NSError
@@ -57,18 +58,7 @@ actual fun TelegramLoginView(
 ) {
     var isLoading by remember { mutableStateOf(true) }
 
-    val telegramUrl =
-        remember(config) {
-            buildString {
-                append("https://oauth.telegram.org/auth?")
-                append("bot_id=${config.botId}")
-                append("&origin=${config.websiteUrl}")
-                append("&lang=${config.languageCode}")
-                if (config.requestAccess) {
-                    append("&request_access=write")
-                }
-            }
-        }
+    val telegramUrl = remember(config) { config.buildTelegramAuthUrl() }
 
     val coordinator =
         remember(config) {
@@ -230,29 +220,12 @@ class TelegramWebViewCoordinator(
 private fun buildCancelOverrideJs() =
     """
     (function() {
-        window.loginCancel = function(event) {
-            if (event) { event.preventDefault(); event.stopPropagation(); }
+        // Override window.close to intercept Telegram's close attempts
+        var _originalClose = window.close.bind(window);
+        window.close = function() {
             window.webkit.messageHandlers.iOSTelegramHandler.postMessage('cancel');
-            return false;
+            // Optionally call original: _originalClose();
         };
-        if (!window.__tgCancelClickInjected) {
-            window.__tgCancelClickInjected = true;
-            document.addEventListener('click', function(e) {
-                var btn = e.target.closest('button');
-                if (
-                    btn &&
-                    btn.getAttribute('onclick') &&
-                    (
-                        btn.getAttribute('onclick').includes('loginCancel') ||
-                        btn.getAttribute('onclick').includes('declineRequest')
-                    )
-                ) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    window.webkit.messageHandlers.iOSTelegramHandler.postMessage('cancel');
-                }
-            }, true);
-        }
     })();
     """.trimIndent()
 
