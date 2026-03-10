@@ -30,5 +30,5 @@ allprojects {
 
 allprojects {
     group = "me.anasmusa"
-    version = (project.findProperty("VERSION_NAME") as String?) ?: "1.0.0"
+    version = (project.findProperty("VERSION_NAME") as String?) ?: "1.0.0-SNAPSHOT"
 }

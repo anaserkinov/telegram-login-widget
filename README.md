@@ -117,14 +117,6 @@ TelegramLoginButton(
     left = {
         TelegramButtonIcon(tint = TelegramDefaults.primaryColor)
     },
-    right = {
-        TelegramButtonUserPhotoBox(
-            state = it,
-            progress = {
-                TelegramButtonCircularProgress(color = TelegramDefaults.primaryColor)
-            },
-        )
-    },
     colors = TelegramDefaults.buttonColors(
         containerColor = Color.White,
         contentColor = Color.Black,

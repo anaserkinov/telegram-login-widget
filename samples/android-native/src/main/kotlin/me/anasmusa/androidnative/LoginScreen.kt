@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import me.anasmusa.shared.TelegramLoginResult
-import me.anasmusa.telegramloginwidget.TelegramButtonCircularProgress
 import me.anasmusa.telegramloginwidget.TelegramButtonIcon
 import me.anasmusa.telegramloginwidget.TelegramButtonText
 import me.anasmusa.telegramloginwidget.TelegramButtonUserPhotoBox
@@ -75,14 +74,6 @@ fun LoginScreen(
                     .fillMaxWidth(),
             left = {
                 TelegramButtonIcon(tint = TelegramDefaults.primaryColor)
-            },
-            right = {
-                TelegramButtonUserPhotoBox(
-                    state = it,
-                    progress = {
-                        TelegramButtonCircularProgress(color = TelegramDefaults.primaryColor)
-                    },
-                )
             },
             colors =
                 TelegramDefaults.buttonColors(

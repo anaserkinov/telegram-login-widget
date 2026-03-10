@@ -25,10 +25,6 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
-        maven {
-            name = "Central Portal Snapshots"
-            setUrl("https://central.sonatype.com/repository/maven-snapshots/")
-        }
     }
 }
 
