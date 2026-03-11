@@ -136,8 +136,11 @@ TelegramLoginButton(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            TelegramButtonText(state = it)
-            TelegramButtonUserPhotoBox(state = it, modifier = Modifier.padding(start = 8.dp))
+            TelegramButtonText(
+                state = it,
+                modifier = Modifier.weight(weight = 1f, fill = false)
+            )
+            TelegramButtonUserPhotoBox(state = it)
         }
     },
     right = null,

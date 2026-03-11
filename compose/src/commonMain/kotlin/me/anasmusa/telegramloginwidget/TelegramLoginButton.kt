@@ -61,7 +61,7 @@ object TelegramDefaults {
     val primaryColor = Color(0xFF54A9EB)
     val disabledPrimaryColor = Color(0xFFABDAFF)
     val iconSize = 24.dp
-    val iconEndPadding = 12.dp
+    val spacing = 8.dp
     val progressStrokeWidth = 2.dp
     val userPhotoSize = 24.dp
 
@@ -86,7 +86,7 @@ fun TelegramButtonIcon(
     contentDescription: String? = null,
     modifier: Modifier =
         Modifier
-            .padding(end = TelegramDefaults.iconEndPadding)
+            .padding(end = TelegramDefaults.spacing)
             .size(TelegramDefaults.iconSize),
     tint: Color = Color.White,
 ) {
@@ -104,7 +104,7 @@ fun TelegramButtonCircleIcon(
     contentDescription: String? = null,
     modifier: Modifier =
         Modifier
-            .padding(end = TelegramDefaults.iconEndPadding)
+            .padding(end = TelegramDefaults.spacing)
             .size(TelegramDefaults.iconSize)
             .background(color = TelegramDefaults.primaryColor, CircleShape)
             .padding(6.dp)
@@ -134,9 +134,9 @@ fun TelegramButtonText(
     textDecoration: TextDecoration? = null,
     textAlign: TextAlign? = TextAlign.Center,
     lineHeight: TextUnit = TextUnit.Unspecified,
-    overflow: TextOverflow = TextOverflow.Clip,
+    overflow: TextOverflow = TextOverflow.Ellipsis,
     softWrap: Boolean = true,
-    maxLines: Int = Int.MAX_VALUE,
+    maxLines: Int = 1,
     minLines: Int = 1,
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
     style: TextStyle = LocalTextStyle.current,
@@ -217,7 +217,7 @@ fun TelegramButtonUserPhotoBox(
     state: TelegramLoginState,
     modifier: Modifier =
         Modifier
-            .padding(start = 8.dp)
+            .padding(start = TelegramDefaults.spacing)
             .size(TelegramDefaults.userPhotoSize),
     contentAlignment: Alignment = Alignment.CenterStart,
     progress: (@Composable () -> Unit)? = ::TelegramButtonCircularProgress,
@@ -252,7 +252,12 @@ fun TelegramLoginButton(
         TelegramButtonIcon()
     },
     center: @Composable RowScope.(state: TelegramLoginState) -> Unit = {
-        TelegramButtonText(state = state)
+        TelegramButtonText(
+            state = state,
+            modifier =
+                Modifier
+                    .weight(1f, false),
+        )
     },
     right: (@Composable RowScope.(state: TelegramLoginState) -> Unit)? = {
         TelegramButtonUserPhotoBox(state = state)
@@ -337,7 +342,12 @@ fun TelegramLoginButton(
         TelegramButtonIcon()
     },
     center: @Composable RowScope.(state: TelegramLoginState) -> Unit = {
-        TelegramButtonText(state = state)
+        TelegramButtonText(
+            state = state,
+            modifier =
+                Modifier
+                    .weight(1f, false),
+        )
     },
     right: (@Composable RowScope.(state: TelegramLoginState) -> Unit)? = {
         TelegramButtonUserPhotoBox(state = state)
@@ -378,7 +388,12 @@ fun TelegramLoginOutlinedButton(
         TelegramButtonCircleIcon()
     },
     center: @Composable RowScope.(state: TelegramLoginState) -> Unit = {
-        TelegramButtonText(state = state)
+        TelegramButtonText(
+            state = state,
+            modifier =
+                Modifier
+                    .weight(1f, false),
+        )
     },
     right: (@Composable RowScope.(state: TelegramLoginState) -> Unit)? = {
         TelegramButtonUserPhotoBox(state = state)
@@ -463,7 +478,12 @@ fun TelegramLoginOutlinedButton(
         TelegramButtonCircleIcon()
     },
     center: @Composable RowScope.(state: TelegramLoginState) -> Unit = {
-        TelegramButtonText(state = state)
+        TelegramButtonText(
+            state = state,
+            modifier =
+                Modifier
+                    .weight(1f, false),
+        )
     },
     right: (@Composable RowScope.(state: TelegramLoginState) -> Unit)? = {
         TelegramButtonUserPhotoBox(state = state)

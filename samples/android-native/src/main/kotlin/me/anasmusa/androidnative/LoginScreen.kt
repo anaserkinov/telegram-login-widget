@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
@@ -101,25 +100,18 @@ fun LoginScreen(
         TelegramLoginButton(
             state = state,
             onResult = onResult,
-            modifier =
-                Modifier
-                    .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             center = {
                 Row(
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .padding(end = TelegramDefaults.userPhotoSize),
+                    modifier = Modifier.weight(1f),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    TelegramButtonText(state = it)
-                    TelegramButtonUserPhotoBox(
+                    TelegramButtonText(
                         state = it,
-                        modifier =
-                            Modifier
-                                .padding(start = 8.dp),
+                        modifier = Modifier.weight(weight = 1f, fill = false),
                     )
+                    TelegramButtonUserPhotoBox(state = it)
                 }
             },
             right = null,
@@ -157,20 +149,15 @@ fun LoginScreen(
                     .fillMaxWidth(),
             center = {
                 Row(
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .padding(end = TelegramDefaults.userPhotoSize),
+                    modifier = Modifier.weight(1f),
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    TelegramButtonText(state = it)
-                    TelegramButtonUserPhotoBox(
+                    TelegramButtonText(
                         state = it,
-                        modifier =
-                            Modifier
-                                .padding(start = 8.dp),
+                        modifier = Modifier.weight(weight = 1f, fill = false),
                     )
+                    TelegramButtonUserPhotoBox(state = it)
                 }
             },
             right = null,
