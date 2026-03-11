@@ -75,42 +75,32 @@ object TelegramLoginManager {
 
     private fun parseWidgetHtml(string: String): TelegramButtonContent? =
         try {
-            var loginText: String? = null
+            val loginText = StringBuilder()
             var userFirstName: String? = null
             var userPhotoUrl: String? = null
 
-            var lastTag: String? = null
-            var lastClassName: String? = null
-
+            val tags: MutableList<String> = ArrayList()
             val parser =
                 KsoupHtmlParser(
                     handler =
                         KsoupHtmlHandler
                             .Builder()
                             .onOpenTag { name, attributes, _ ->
-                                val className = attributes["class"]
-                                if (lastClassName == "tgme_widget_login_user_photo bgcolor2") {
-                                    if (name == "img") {
-                                        userPhotoUrl = attributes["src"]
-                                    }
+                                if (name == "img") {
+                                    userPhotoUrl = attributes["src"]
                                 }
-                                lastTag = name
-                                if (className != null) {
-                                    lastClassName = className
-                                }
+                                tags.add(name)
+                            }.onCloseTag { _, _ ->
+                                tags.removeLast()
                             }.onText {
-                                when (lastClassName) {
-                                    "tgme_widget_login_button_icon" -> {
-                                        when (lastTag) {
-                                            "i" ->
-                                                if (loginText == null && it.isNotBlank()) {
-                                                    loginText = it
-                                                }
-                                            "span" ->
-                                                if (userFirstName == null && it.isNotBlank()) {
-                                                    userFirstName = it
-                                                }
+                                if (tags.contains("button")) {
+                                    if (tags.lastOrNull() == "span") {
+                                        if (userFirstName == null && it.isNotBlank()) {
+                                            userFirstName = it
                                         }
+                                    }
+                                    if (it.isNotBlank()) {
+                                        loginText.append(it)
                                     }
                                 }
                             }.build(),
@@ -118,21 +108,12 @@ object TelegramLoginManager {
             parser.write(string)
             parser.end()
 
-            if (userFirstName != null) {
-                TelegramButtonContent(
-                    text = (loginText ?: "") + userFirstName,
-                    userFirstName = userFirstName,
-                    userPhotoUrl = userPhotoUrl,
-                    userPhotoData = null,
-                )
-            } else {
-                TelegramButtonContent(
-                    text = loginText,
-                    userFirstName = userFirstName,
-                    userPhotoUrl = userPhotoUrl,
-                    userPhotoData = null,
-                )
-            }
+            TelegramButtonContent(
+                text = loginText.takeIf { it.isNotEmpty() }?.toString(),
+                userFirstName = userFirstName,
+                userPhotoUrl = userPhotoUrl,
+                userPhotoData = null,
+            )
         } catch (_: Exception) {
             null
         }
