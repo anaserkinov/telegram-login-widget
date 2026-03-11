@@ -22,6 +22,7 @@ kotlin {
     iosTargets.forEach {
         it.binaries.framework {
             baseName = "TelegramLoginData"
+            isStatic = true
             xcf.add(this)
         }
     }
