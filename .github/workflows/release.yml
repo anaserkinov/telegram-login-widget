@@ -20,6 +20,9 @@ jobs:
       - name: Setup Project
         uses: ./.github/actions/setup-project
 
+      - name: Run Lint Checks
+        uses: ./.github/actions/lint-check
+
       - name: Set version
         id: version
         run: echo "ORG_GRADLE_PROJECT_VERSION_NAME=${GITHUB_REF#refs/tags/v}" >> $GITHUB_ENV
