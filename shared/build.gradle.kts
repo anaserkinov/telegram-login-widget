@@ -17,7 +17,7 @@ kotlin {
     }
 
     val xcf = XCFramework("TelegramLoginData")
-    val iosTargets = listOf(iosArm64(), iosSimulatorArm64())
+    val iosTargets = listOf(iosArm64(), iosX64(), iosSimulatorArm64())
 
     iosTargets.forEach {
         it.binaries.framework {
