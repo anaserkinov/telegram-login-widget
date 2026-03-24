@@ -31,8 +31,9 @@ dependencyResolutionManagement {
     }
 }
 
-include(":shared")
-include(":compose")
+include(":data")
+include(":widget")
+include(":login")
 
 include(":samples:compose-multiplatform:composeApp")
 include(":samples:compose-multiplatform:androidApp")

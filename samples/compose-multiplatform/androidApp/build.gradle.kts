@@ -41,7 +41,8 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.viewmodelCompose)
     implementation(libs.androidx.lifecycle.runtimeCompose)
-    implementation(project(":samples:compose-multiplatform:composeApp"))
+    implementation(libs.androidx.appcompat)
+    implementation(projects.samples.composeMultiplatform.composeApp)
 
     debugImplementation(libs.compose.uiTooling)
 }

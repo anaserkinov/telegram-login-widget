@@ -44,9 +44,11 @@ kotlin {
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor3)
 
-            implementation(project(":compose"))
+            implementation(projects.widget)
+            implementation(projects.login)
         }
         androidMain.dependencies {
+            implementation(libs.androidx.appcompat)
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.android)

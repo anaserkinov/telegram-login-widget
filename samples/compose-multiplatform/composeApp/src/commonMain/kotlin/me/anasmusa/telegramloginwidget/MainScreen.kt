@@ -18,11 +18,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
-import me.anasmusa.shared.TelegramLoginResult
 
 @Composable
 fun MainScreen(
-    user: TelegramLoginResult.Success,
+    user: User,
     backToLoginScreen: () -> Unit,
     onLogout: () -> Unit,
 ) {
@@ -44,12 +43,16 @@ fun MainScreen(
             modifier = Modifier.height(16.dp),
         )
         Text(
-            text = user.firstName + " " + (user.lastName ?: ""),
+            text = user.fullName,
             fontWeight = FontWeight.Bold,
             fontSize = 24.sp,
         )
 
         user.username?.let {
+            Text(text = it)
+        }
+
+        user.phoneNumber?.let {
             Text(text = it)
         }
 

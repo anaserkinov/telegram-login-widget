@@ -1,8 +1,17 @@
 # Telegram Login Widget
 
-A Kotlin Multiplatform library that brings [Telegram Login Widget](https://core.telegram.org/widgets/login) to Android and iOS using Compose Multiplatform. It provides ready-to-use, fully customizable login buttons backed by Telegram's official OAuth flow.
+A Kotlin Multiplatform library that brings Telegram authentication to Android and iOS using Compose Multiplatform. It supports two official Telegram login methods — pick the one that fits your use case.
 
-<img src="/assets/images/buttons_light.webp"  alt="Buttons"/>
+---
+
+## Login Methods
+
+| Method | Artifact |
+|--------|----------|
+| [Telegram Login / OpenID Connect](#telegram-login--openid-connect) | `me.anasmusa:telegram-login` |
+| [Telegram Login Widget](#telegram-login-widget-legacy) | `me.anasmusa:telegram-login-widget` |
+
+---
 
 ## Platforms
 
@@ -15,19 +24,177 @@ Looking for the iOS / SwiftUI version? Check out the [Swift package](https://git
 
 ---
 
-## Installation
+## Telegram Login / OpenID Connect
 
-Add the dependency to your project:
+The modern Telegram login flow ([Login via Telegram](https://core.telegram.org/bots/telegram-login)). It presents a Telegram-hosted dialog where the user confirms login with a single tap, then hands back an ID token and profile data to your app.
+
+<p align="center">
+  <img src="/assets/images/sample.gif" alt="Telegram Login demo" width="512"/>
+</p>
+
+### Installation
+
+```kotlin
+implementation("me.anasmusa:telegram-login:<version>")
+```
+
+### Setup
+
+Follow Telegram's official guide to set up your bot and obtain a `client_id`: [Setting up a bot](https://core.telegram.org/bots/telegram-login#setting-up-a-bot).
+
+### Usage
+
+#### Basic Button
+
+```kotlin
+@Composable
+fun LoginScreen(onResult: (TelegramLoginResult) -> Unit) {
+    TelegramLoginButton(
+        config = TelegramLoginConfig(
+            clientId = 123456789L,
+            redirectURI = "https://yourapp.com/callback",
+        ),
+        onResult = onResult,
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        Text("Log in with Telegram")
+    }
+}
+```
+
+Tapping the button opens a `TelegramLoginDialog` with the Telegram OAuth WebView. Once the user authenticates, `onResult` is called with either `TelegramLoginResult.Success` or `TelegramLoginResult.Cancelled`.
+
+---
+
+#### Handling the Result
+
+```kotlin
+TelegramLoginButton(
+    config = config,
+    onResult = { result ->
+        when (result) {
+            is TelegramLoginResult.Success -> {
+                val user = result.user
+                println("Logged in as ${user.name} (id=${user.id})")
+                // result.idToken  — raw JWT ID token for server-side validation
+                // user.id, user.name, user.preferredUsername,
+                // user.picture, user.phoneNumber, user.nonce,
+                // user.iss, user.aud, user.iat, user.exp
+            }
+            is TelegramLoginResult.Cancelled -> {
+                println("Login cancelled")
+            }
+        }
+    },
+    modifier = Modifier.fillMaxWidth(),
+) {
+    Text("Log in with Telegram")
+}
+```
+
+---
+
+You can also trigger the login flow from any custom UI element using `TelegramLoginDialog` directly:
+
+```kotlin
+var showDialog by remember { mutableStateOf(false) }
+
+FilledIconButton(onClick = { showDialog = true }) {
+    Icon(imageVector = TelegramDefaults.icon, contentDescription = null)
+}
+
+if (showDialog) {
+    TelegramLoginDialog(
+        config = config,
+        onResult = { result ->
+            showDialog = false
+            onResult(result)
+        },
+    )
+}
+```
+
+If you need to embed the OAuth WebView directly into your own layout without any button or dialog, use `TelegramLoginView`:
+
+```kotlin
+TelegramLoginView(
+    config = TelegramLoginConfig(
+        clientId = 123456789L,
+        redirectURI = "https://yourapp.com/callback",
+    ),
+    modifier = Modifier.fillMaxSize(),
+    onResult = onResult,
+)
+```
+
+---
+
+### API Reference
+
+#### `TelegramLoginConfig`
+
+```kotlin
+data class TelegramLoginConfig(
+    val clientId: Long,
+    val redirectURI: String,
+    val requestDirectMessages: Boolean = true, // request permission to send direct messages to the user (bot_access scope)
+    val requestPhoneNumber: Boolean = false,   // request access to the user's phone number (phone scope)
+    val nonce: String? = null,                 // optional nonce to protect against ID token replay attacks
+    val languageCode: String? = null,
+    val uiMode: UiMode = UiMode.Unspecified,   // Light, Dark, or system/default
+)
+```
+
+#### `TelegramLoginResult`
+
+```kotlin
+sealed interface TelegramLoginResult {
+    data class Success(
+        val idToken: String,          // an OIDC JWT token containing user claims — validate on your server
+        val user: TelegramUserData,   // Decoded id_token, containing the requested user info
+    ) : TelegramLoginResult
+
+    data object Cancelled : TelegramLoginResult
+}
+
+data class TelegramUserData(
+    val id: Long,
+    val name: String,
+    val preferredUsername: String?,
+    val picture: String?,
+    val phoneNumber: String?,
+    val nonce: String?,
+    // JWT standard claims
+    val iss: String,
+    val aud: String,
+    val iat: Long,
+    val exp: Long,
+)
+```
+
+#### `UiMode`
+
+```kotlin
+enum class UiMode { Light, Dark, Unspecified }
+```
+
+---
+
+## Telegram Login Widget
+
+The classic [Telegram Login Widget](https://core.telegram.org/widgets/login) flow. It provides ready-to-use, fully customizable login buttons backed by Telegram's official OAuth flow. Requires a bot and a registered website domain.
+
+<img src="/assets/images/buttons_light.webp" alt="Buttons light" />
+
+### Installation
 
 ```kotlin
 implementation("me.anasmusa:telegram-login-widget:<version>")
 ```
 
----
+### Setup
 
-## Setup
-
-### 1. Create a Telegram Bot
+#### 1. Create a Telegram Bot
 
 If you don't have a bot yet, create one via [@BotFather](https://t.me/BotFather) and note the **bot ID** and **bot username**.
 
@@ -37,15 +204,15 @@ To find your bot ID, open the following URL in any browser (replace `YOUR_BOT_TO
 https://api.telegram.org/botYOUR_BOT_TOKEN/getMe
 ```
 
-### 2. Configure the Login Widget in BotFather
+#### 2. Configure the Login Widget in BotFather
 
 Send `/setdomain` to BotFather, select your bot, and enter the domain of the website you'll be authorizing against (e.g. `yourdomain.com`). This is required by Telegram's login widget.
 
 ---
 
-## Usage
+### Usage
 
-### Basic Button
+#### Basic Button
 
 ```kotlin
 @Composable
@@ -64,11 +231,11 @@ fun LoginScreen(onResult: (TelegramLoginResult) -> Unit) {
 }
 ```
 
-Tapping the button opens a `ModalBottomSheet` with Telegram's login WebView. Once the user authenticates, `onResult` is called with either a `TelegramLoginResult.Success` or `TelegramLoginResult.Cancelled`.
+Tapping the button opens a `ModalBottomSheet` with Telegram's login WebView. Once the user authenticates, `onResult` is called with either `TelegramLoginResult.Success` or `TelegramLoginResult.Cancelled`.
 
 ---
 
-### Handling the Result
+#### Handling the Result
 
 ```kotlin
 TelegramLoginButton(
@@ -90,7 +257,7 @@ TelegramLoginButton(
 
 ---
 
-### Outlined Button
+#### Outlined Button
 
 ```kotlin
 TelegramLoginOutlinedButton(
@@ -102,11 +269,11 @@ TelegramLoginOutlinedButton(
 
 ---
 
-### Customizing Button
+#### Customizing the Button
 
-Both button composables are fully customizable — you can swap out any part of the button's appearance, change colors, replace the icon style, adjust the avatar position, or compose entirely custom content.
+Both button composables are fully customizable — swap out any slot, change colors, replace the icon style, adjust avatar position, or compose entirely custom content.
 
-<img src="/assets/images/buttons_dark.webp"  alt="Buttons"/>
+<img src="/assets/images/buttons_dark.webp" alt="Buttons dark" />
 
 ```kotlin
 // Light-themed button with Telegram-colored icon
@@ -138,7 +305,7 @@ TelegramLoginButton(
         ) {
             TelegramButtonText(
                 state = it,
-                modifier = Modifier.weight(weight = 1f, fill = false)
+                modifier = Modifier.weight(weight = 1f, fill = false),
             )
             TelegramButtonUserPhotoBox(state = it)
         }
@@ -175,7 +342,7 @@ TelegramLoginView(
     config = TelegramLoginConfig(
         botId = 123456789,
         botUsername = "your_bot",
-        websiteUrl = "https://yourdomain.com"
+        websiteUrl = "https://yourdomain.com",
     ),
     modifier = Modifier.fillMaxSize(),
     onResult = onResult,
@@ -184,7 +351,7 @@ TelegramLoginView(
 
 ---
 
-### Logout
+#### Logout
 
 ```kotlin
 // If you have a state object
@@ -198,9 +365,9 @@ This clears all Telegram cookies and resets the button to its pre-login appearan
 
 ---
 
-## API Reference
+### API Reference
 
-### `rememberTelegramLoginState`
+#### `rememberTelegramLoginState`
 
 ```kotlin
 fun rememberTelegramLoginState(
@@ -212,17 +379,17 @@ fun rememberTelegramLoginState(
 ): TelegramLoginState
 ```
 
-### `TelegramLoginState`
+#### `TelegramLoginState`
 
 | Member | Type | Description |
 |--------|------|-------------|
 | `config` | `TelegramLoginConfig` | The configuration used to initialize the widget |
 | `isLoading` | `Boolean` | `true` while button content or user photo is being fetched |
-| `buttonContent` | `ButtonContent` | Current text (may be empty before first successful load), first name, and avatar painter |
+| `buttonContent` | `ButtonContent` | Current text, first name, and avatar painter |
 | `reload()` | `fun` | Re-fetches button state (call after a login result) |
 | `logout()` | `fun` | Clears session and resets button |
 
-### `TelegramLoginResult`
+#### `TelegramLoginResult`
 
 ```kotlin
 sealed interface TelegramLoginResult {
@@ -233,7 +400,7 @@ sealed interface TelegramLoginResult {
         val username: String?,
         val photoUrl: String?,
         val authDate: Long,
-        val hash: String,
+        val hash: String,         // verify on your server
     ) : TelegramLoginResult
 
     data object Cancelled : TelegramLoginResult
@@ -259,7 +426,7 @@ The repository includes two sample apps:
 | Android `compileSdk` | 36 |
 | Kotlin | 2.3 |
 | Compose Multiplatform | 1.10 |
-| iOS targets | `iosArm64`, `iosSimulatorArm64` |
+| iOS targets | `iosArm64`, `iosSimulatorArm64`, `iosX64` |
 
 ---
 
