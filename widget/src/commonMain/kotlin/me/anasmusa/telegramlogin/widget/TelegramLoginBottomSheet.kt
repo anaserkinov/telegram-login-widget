@@ -45,6 +45,7 @@ fun TelegramLoginBottomSheet(
                 Modifier
                     .align(Alignment.TopCenter),
             strokeWidth = 3.dp,
+            color = TelegramDefaults.primaryColor,
         )
     },
     onResult: (TelegramLoginResult) -> Unit,
