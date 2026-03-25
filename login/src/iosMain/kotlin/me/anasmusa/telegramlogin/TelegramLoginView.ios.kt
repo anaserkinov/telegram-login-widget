@@ -240,11 +240,6 @@ private fun parse(authData: String?): TelegramLoginResult {
             )?.convertToString() ?: return TelegramLoginResult.Cancelled
     val json = decodeJwtPayload(idToken) ?: return TelegramLoginResult.Cancelled
 
-    println("json: $json")
-    json.forEach {
-        println("${it.key}: ${it.value}")
-    }
-
     return try {
         TelegramLoginResult.Success(
             idToken = idToken,

@@ -187,7 +187,7 @@ private fun decodeJwtPayload(token: String): JSONObject? {
 
 private fun parse(authData: String?): TelegramLoginResult {
     if (authData == null) return TelegramLoginResult.Cancelled
-    val idToken = Base64.decode(authData, Base64.URL_SAFE).toString(Charsets.UTF_8)
+    val idToken = Base64.decode(authData, Base64.URL_SAFE).toString(Charsets.UTF_8).removeSurrounding("\"")
     val json = decodeJwtPayload(idToken) ?: return TelegramLoginResult.Cancelled
     return try {
         TelegramLoginResult.Success(
