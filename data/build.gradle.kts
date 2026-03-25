@@ -1,3 +1,5 @@
+import com.android.build.api.dsl.LibraryExtension
+import com.android.builder.model.AndroidLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
@@ -14,6 +16,13 @@ kotlin {
         namespace = "me.anasmusa.telegramlogin.widget.data"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
         minSdk = libs.versions.android.minSdk.get().toInt()
+
+        optimization {
+            consumerKeepRules.apply {
+                publish = true
+                files.add(File(projectDir, "consumer-proguard-rules.pro"))
+            }
+        }
     }
 
     val xcf = XCFramework("TelegramLoginWidgetData")

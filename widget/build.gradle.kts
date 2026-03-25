@@ -18,6 +18,14 @@ kotlin {
                 excludes += "/META-INF/{AL2.0,LGPL2.1}"
             }
         }
+
+
+        optimization {
+            consumerKeepRules.apply {
+                publish = true
+                files.add(File(projectDir, "consumer-proguard-rules.pro"))
+            }
+        }
     }
 
     listOf(
