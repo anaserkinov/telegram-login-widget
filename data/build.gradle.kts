@@ -1,5 +1,3 @@
-import com.android.build.api.dsl.LibraryExtension
-import com.android.builder.model.AndroidLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFramework
 
 plugins {
@@ -42,6 +40,11 @@ kotlin {
                 implementation(libs.kotlin.stdlib)
                 implementation(libs.kotlinx.coroutines.core)
                 implementation(libs.ksoup.html)
+            }
+        }
+        androidMain {
+            dependencies {
+                implementation(libs.okhttp)
             }
         }
     }

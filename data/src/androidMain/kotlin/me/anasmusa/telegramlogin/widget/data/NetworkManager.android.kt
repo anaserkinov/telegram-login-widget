@@ -3,41 +3,42 @@ package me.anasmusa.telegramlogin.widget.data
 import android.webkit.CookieManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.net.HttpURLConnection
-import java.net.URL
-import kotlin.text.buildString
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import java.lang.ref.SoftReference
+
+private var client: SoftReference<OkHttpClient>? = null
+
+private fun getClient() =
+    client?.get() ?: run {
+        val new = OkHttpClient()
+        client = SoftReference(new)
+        new
+    }
 
 actual suspend fun getButtonHtml(config: TelegramLoginConfig): String? =
     withContext(Dispatchers.IO) {
         try {
-            val connection =
-                URL(
-                    buildString {
-                        append("https://oauth.telegram.org/embed/${config.botUsername}?")
-                        append("origin=${config.websiteUrl}&")
-                        append("return_to=${config.websiteUrl}&")
-                        append("lang=${config.languageCode}")
-                    },
-                ).openConnection() as HttpURLConnection
-            try {
-                connection.requestMethod = "GET"
-                connection.doOutput = true
-                connection.setRequestProperty("Accept", "text/html")
+            val client = getClient()
 
-                val cookies = getTelegramCookies()
-                if (cookies != null) {
-                    connection.setRequestProperty("Cookie", cookies)
-                }
+            val request =
+                Request
+                    .Builder()
+                    .url(
+                        buildString {
+                            append("https://oauth.telegram.org/embed/${config.botUsername}?")
+                            append("origin=${config.websiteUrl}&")
+                            append("return_to=${config.websiteUrl}&")
+                            append("lang=${config.languageCode}")
+                        },
+                    ).addHeader("Accept", "text/html")
+                    .apply {
+                        val cookies = getTelegramCookies()
+                        if (cookies != null) addHeader("Cookie", cookies)
+                    }.build()
 
-                val responseCode = connection.responseCode
-                if (responseCode in 200..299) {
-                    val stream = connection.inputStream
-                    stream.bufferedReader().use { it.readText() }
-                } else {
-                    null
-                }
-            } finally {
-                connection.disconnect()
+            client.newCall(request).execute().use { response ->
+                response.body.string()
             }
         } catch (_: Exception) {
             null
@@ -47,20 +48,16 @@ actual suspend fun getButtonHtml(config: TelegramLoginConfig): String? =
 actual suspend fun loadImage(url: String): ByteArray? =
     withContext(Dispatchers.IO) {
         try {
-            val connection = URL(url).openConnection() as HttpURLConnection
-            try {
-                connection.connect()
-
-                val bytes =
-                    connection.getInputStream().use { input ->
-                        input.readBytes()
-                    }
-
-                bytes
-            } finally {
-                connection.disconnect()
+            val client = getClient()
+            val request =
+                Request
+                    .Builder()
+                    .url(url)
+                    .build()
+            client.newCall(request).execute().use { response ->
+                response.body.bytes()
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             null
         }
     }
