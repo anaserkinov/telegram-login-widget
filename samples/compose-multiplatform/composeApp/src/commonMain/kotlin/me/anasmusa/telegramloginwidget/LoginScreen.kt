@@ -45,7 +45,7 @@ fun LoginScreen(
         val config =
             TelegramLoginConfig(
                 clientId = 8266153417L,
-                redirectURI = "https://learncast.anasmusa.me/callback",
+                redirectURI = "https://anasmusa.me",
                 requestPhoneNumber = true,
                 nonce = "secret_string",
                 uiMode = getUiMode(),

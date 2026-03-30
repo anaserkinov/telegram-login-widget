@@ -101,7 +101,7 @@ actual fun TelegramLoginView(
                             ): Boolean {
                                 val url = request?.url
 
-                                if (url != null && (url.toString().contains("tg://resolve") || url.toString().contains("tg:resolve"))) {
+                                if (url != null && (url.toString().startsWith("tg:"))) {
                                     try {
                                         val intent = Intent(Intent.ACTION_VIEW, url)
                                         context.startActivity(intent)
@@ -199,7 +199,11 @@ private fun parse(authData: String?): TelegramLoginResult {
                     sub = json.getString("sub"),
                     iat = json.getLong("iat"),
                     exp = json.getLong("exp"),
-                    id = json.getLong("id"),
+                    id =
+                        json.optLong(
+                            "id",
+                            json.getString("id").toLong(),
+                        ),
                     name = json.getString("name"),
                     preferredUsername = if (json.has("preferred_username")) json.getString("preferred_username") else null,
                     picture = if (json.has("picture")) json.getString("picture") else null,

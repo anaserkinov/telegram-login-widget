@@ -74,7 +74,6 @@ actual fun TelegramLoginView(
                 }
 
             WKWebView(frame = UIScreen.mainScreen.bounds, configuration = configuration).apply {
-                this.canGoBack
                 navigationDelegate = coordinator
                 if (config.uiMode == UiMode.Dark) {
                     overrideUserInterfaceStyle = UIUserInterfaceStyle.UIUserInterfaceStyleDark
